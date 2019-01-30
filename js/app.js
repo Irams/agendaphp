@@ -116,8 +116,48 @@ function insertarBD(datos){
     xhr.send(datos);
 }
 //Eliminar el contacto
-function eliminarContacto(){
-    console.log('Diste click');
+function eliminarContacto(e){
+    if (e.target.parentElement.classList.contains('btn-borrar') ) {
+    //console.log('Diste click');
+    //tomar Id
+    const id = e.target.parentElement.getAttribute('data-id');
+    //console.log(id);
+    //Preguntamos al usuario
+    const respuesta = confirm('¿Estás seguro(a)?');
+    if(respuesta){
+        //Llamado a Ajax
+        //Crear el objeto
+        const xhrEliminar = new XMLHttpRequest();
+
+        //Abrir la conexión
+        xhrEliminar.open('GET', `inc/modelos/modelo-contactos.php?id=${id}&accion=borrar`, true);
+
+        //Leer la respuesta
+        xhrEliminar.onload = function() {
+            if(this.status === 200){
+                const resultado = JSON.parse(xhrEliminar.responseText);
+
+                //console.log(resultado);
+                if(resultado.respuesta === 'correcto'){
+                    //Eliminar el registro del DOM
+                    console.log(e.target.parentElement.parentElement.parentElement);
+                    e.target.parentElement.parentElement.parentElement.remove();
+                    //Mostrar notificación de eliminado
+                    mostrarNotificacion('Contacto eliminado', 'correcto');
+                } else{
+                    //Mostramos una notificación
+                    mostrarNotificacion('Hubo un error...', 'error');
+                }
+                
+            }
+        }
+
+        //Enviar los datos
+        xhrEliminar.send();
+    }
+    
+    }
+    
     
 }
 

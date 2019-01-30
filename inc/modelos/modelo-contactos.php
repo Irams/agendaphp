@@ -3,6 +3,7 @@
 if($_POST['accion'] == 'crear'){
     //Creará un nuevo registro en la BD
 
+    //Abrir la conexión con ma BD
     require_once('../funciones/bd.php');
 
     //Validar las entradas
@@ -34,3 +35,34 @@ if($_POST['accion'] == 'crear'){
     }
     echo json_encode($respuesta);
 }
+
+if($_GET['accion'] == 'borrar'){
+    //echo json_encode($_GET);
+    //Abrir la conexión con ma BD
+    require_once('../funciones/bd.php');
+
+    //Validar ID
+    $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+          
+        try{
+            $stmt = $conn->prepare("DELETE FROM contactos WHERE id = ? ");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+
+            if($stmt->affected_rows == 1){
+                $respuesta = array(
+                    'respuesta' => 'correcto'
+                );
+            }
+
+            $stmt->close();
+            $conn->close();
+
+        } catch(Exeption $e){
+            $respuesta = array(
+                'error' => $e->getMessage()
+            );
+        }
+        echo json_encode($respuesta); 
+    } 
+  
